@@ -1,0 +1,14 @@
+#You are given a string str, you need to print True if cat and hat appear same number of times in str, otherwise print False.
+def cat_hat(str):
+ cat=0
+ hat=0
+ for i in range(len(str)-2):
+   partie=str[i:i+3]
+   if partie =="cat":
+     cat+=1
+   elif partie=="hat":
+     hat+=1
+ if hat==cat:
+   print(True)
+ else:
+   print(False)
