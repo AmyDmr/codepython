@@ -1,0 +1,107 @@
+import yfinance as yf
+import pandas as pd
+import requests
+tesla=yf.Ticker("TSLA")
+tesla_data=tesla.history(period="max")
+tesla_data.reset_index(inplace=True)
+tesla_data.head()
+
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+url="https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-PY0220EN-SkillsNetwork/labs/project/revenue.htm"
+data=requests.get(url).text
+soup=BeautifulSoup(data,"html5lib")
+table = soup.find('table')    
+df_list = pd.read_html(str(table))
+tesla_revenue_df = df_list[0]    
+last_five_rows = tesla_revenue_df.tail(5)
+print(last_five_rows)
+
+
+gme=yf.Ticker("GME")
+gme_data=gme.history(period="max")
+gme_data.reset_index(inplace=True)
+gme_data.head()
+
+
+url="https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-PY0220EN-SkillsNetwork/labs/project/stock.html"
+data=requests.get(url).text
+soup=BeautifulSoup(data,"html5lib")
+table = soup.find('table')    
+df_list = pd.read_html(str(table))
+gme_revenue_df = df_list[0]    
+last_five_rows = gme_revenue_df.tail(5)
+print(last_five_rows)
+
+
+
+def clean_and_convert_to_float(column):
+    return column.replace('[\$,]', '', regex=True).astype(float)
+def make_graph(stock_data, revenue_data, stock):
+    fig = make_subplots(rows=2, cols=1, shared_xaxes=True, subplot_titles=("Historical Share Price", "Historical Revenue"), vertical_spacing=.3)
+    stock_data_specific = stock_data  
+    revenue_data_specific = revenue_data
+    stock_data_specific.iloc[:, 1] = clean_and_convert_to_float(stock_data_specific.iloc[:, 1])
+    revenue_data_specific.iloc[:, 1] = clean_and_convert_to_float(revenue_data_specific.iloc[:, 1])
+
+    fig.add_trace(go.Scatter(x=pd.to_datetime(stock_data_specific.iloc[:, 0], infer_datetime_format=True), y=stock_data_specific.iloc[:, 1], name="Share Price"), row=1, col=1)
+    fig.add_trace(go.Scatter(x=pd.to_datetime(revenue_data_specific.iloc[:, 0], infer_datetime_format=True), y=revenue_data_specific.iloc[:, 1], name="Revenue"), row=2, col=1)
+    fig.update_xaxes(title_text="Date", row=1, col=1)
+    fig.update_xaxes(title_text="Date", row=2, col=1)
+    fig.update_yaxes(title_text="Price ($US)", row=1, col=1)
+    fig.update_yaxes(title_text="Revenue ($US Millions)", row=2, col=1)
+    fig.update_layout(showlegend=False,
+                      height=900,
+                      title=stock,
+                      xaxis_rangeslider_visible=True)
+    fig.show()
+url_stock = "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-PY0220EN-SkillsNetwork/labs/project/revenue.htm"
+data_stock = requests.get(url_stock).text
+soup_stock = BeautifulSoup(data_stock, "html5lib")
+table_stock = soup_stock.find_all('table')[0]
+tesla_stock_data = pd.read_html(str(table_stock))[0]
+url_revenue = "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-PY0220EN-SkillsNetwork/labs/project/revenue.htm"
+data_revenue = requests.get(url_revenue).text
+soup_revenue = BeautifulSoup(data_revenue, "html5lib")
+table_revenue = soup_revenue.find_all('table')[1]
+tesla_revenue_data = pd.read_html(str(table_revenue))[0]
+make_graph(tesla_stock_data, tesla_revenue_data, stock="Tesla")
+
+
+
+def clean_and_convert_to_float(column):
+    return column.replace('[\$,]', '', regex=True).astype(float)
+def make_graph(stock_data, revenue_data, stock):
+    fig = make_subplots(rows=2, cols=1, shared_xaxes=True, subplot_titles=("Historical Share Price", "Historical Revenue"), vertical_spacing=.3)
+    stock_data_specific = stock_data  
+    revenue_data_specific = revenue_data
+    stock_data_specific.iloc[:, 1] = clean_and_convert_to_float(stock_data_specific.iloc[:, 1])
+    revenue_data_specific.iloc[:, 1] = clean_and_convert_to_float(revenue_data_specific.iloc[:, 1])
+    fig.add_trace(go.Scatter(x=pd.to_datetime(stock_data_specific.iloc[:, 0], infer_datetime_format=True), y=stock_data_specific.iloc[:, 1], name="Share Price"), row=1, col=1)
+    fig.add_trace(go.Scatter(x=pd.to_datetime(revenue_data_specific.iloc[:, 0], infer_datetime_format=True), y=revenue_data_specific.iloc[:, 1], name="Revenue"), row=2, col=1)
+    fig.update_xaxes(title_text="Date", row=1, col=1)
+    fig.update_xaxes(title_text="Date", row=2, col=1)
+    fig.update_yaxes(title_text="Price ($US)", row=1, col=1)
+    fig.update_yaxes(title_text="Revenue ($US Millions)", row=2, col=1)
+    fig.update_layout(showlegend=False,
+                      height=900,
+                      title=stock,
+                      xaxis_rangeslider_visible=True)
+    fig.show()
+url_gamestop_stock = "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-PY0220EN-SkillsNetwork/labs/project/stock.html"
+data_gamestop_stock = requests.get(url_gamestop_stock).text
+soup_gamestop_stock = BeautifulSoup(data_gamestop_stock, "html5lib")
+tables_gamestop_stock = soup_gamestop_stock.find_all('table')
+num_tables = len(tables_gamestop_stock)
+print(f"Number of tables found: {num_tables}")
+if num_tables > 0:
+    gamestop_stock_data = pd.read_html(str(tables_gamestop_stock[0]))[0]
+    if num_tables > 1:
+        gamestop_revenue_data = pd.read_html(str(tables_gamestop_stock[1]))[0]
+    else:
+        gamestop_revenue_data = pd.DataFrame(columns=["Date", "Revenue"])
+else:
+    gamestop_stock_data = pd.DataFrame(columns=["Date", "Close"])
+    gamestop_revenue_data = pd.DataFrame(columns=["Date", "Revenue"])
+make_graph(gamestop_stock_data, gamestop_revenue_data, stock="GameStop Stock Data and Revenue")
